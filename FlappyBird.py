@@ -1,5 +1,7 @@
 import pygame
 import sys
+import random
+
 
 pygame.init()
 
@@ -23,6 +25,15 @@ def draw_bird(x, y, new_y):
         boost_red2 = pygame.draw.rect(screen, 'red', [x + 5, y + 35, 7, 25], 0, 2)
     return bird
 
+def draw_block(blk, y, bird):
+    global end_game
+    for i in range(len(blk)):
+        top_block = pygame.draw.rect(screen, 'green', [blk[i], 0, 35, y[i]])
+        down_block = pygame.draw.rect(screen, 'green', [blk[i], y[i] + 210, 35, HEIGHT - (y[i] - 50)])
+
+        if top_block.colliderect(bird) or down_block.colliderect(bird):
+            end_game = True
+
 
 # bird variables
 bird_x = 200
@@ -32,12 +43,26 @@ new_y = 0
 jump = 15
 gravitation = 1.5
 
+# obstacle variables
+blocks = [400, 700, 1000, 1300, 1600]
+block_generator = True
+y_pos = []
+end_game = False
+speed = 5
+
 
 while True:
 
     timer.tick(FPS)
     screen.fill(BLUE)
+
+    if block_generator:
+        for i in range(len(blocks)):
+            y_pos.append(random.randint(0, 350))
+        block_generator = False
+
     bird = draw_bird(bird_x, bird_y, new_y)
+    draw_block(blocks, y_pos, bird)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -52,7 +77,11 @@ while True:
     else:
         bird_y = HEIGHT - 30
 
-
+    for i in range(len(blocks)):
+        if not end_game:
+            blocks[i] -= speed
+        else:
+            sys.exit()
 
     pygame.display.flip()
     pygame.display.update()
