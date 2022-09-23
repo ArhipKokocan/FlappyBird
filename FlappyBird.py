@@ -49,7 +49,9 @@ block_generator = True
 y_pos = []
 end_game = False
 speed = 5
+score = 0
 
+font = pygame.font.Font(pygame.font.get_default_font(), 36)
 
 while True:
 
@@ -68,7 +70,7 @@ while True:
         if event.type == pygame.QUIT:
             sys.exit()
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_SPACE and not end_game:
                 new_y = -jump
 
     if bird_y + new_y < HEIGHT - 30:
@@ -80,8 +82,14 @@ while True:
     for i in range(len(blocks)):
         if not end_game:
             blocks[i] -= speed
-        else:
-            sys.exit()
+            if blocks[i] < -30:
+                blocks.remove(blocks[i])
+                y_pos.remove(y_pos[i])
+                blocks.append(random.randint(blocks[-1] + 300, blocks[-1] + 350))
+                y_pos.append(random.randint(0, 350))
+                score += 1
 
+    score_text = font.render(f'Score: {score}', True, 'white')
+    screen.blit(score_text, dest=(0, 0))
     pygame.display.flip()
     pygame.display.update()
