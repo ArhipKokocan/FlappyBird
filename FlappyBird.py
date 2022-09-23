@@ -50,6 +50,7 @@ y_pos = []
 end_game = False
 speed = 5
 score = 0
+high_score = 0
 
 font = pygame.font.Font(pygame.font.get_default_font(), 36)
 
@@ -72,6 +73,16 @@ while True:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE and not end_game:
                 new_y = -jump
+            if event.key == pygame.K_SPACE and end_game:
+                bird_x = 200
+                bird_y = 255
+                new_y = 0
+                block_generator = True
+                blocks = [400, 700, 1000, 1300, 1600]
+                y_pos = []
+                score = 0
+                end_game = False
+
 
     if bird_y + new_y < HEIGHT - 30:
         bird_y += new_y
@@ -89,7 +100,16 @@ while True:
                 y_pos.append(random.randint(0, 350))
                 score += 1
 
+    if score > high_score:
+        high_score = score
+
+    if end_game is True:
+        game_over_text = font.render(f'Game is over! Click space to start again!', True, 'black')
+        screen.blit(game_over_text, (50, 300))
+
     score_text = font.render(f'Score: {score}', True, 'white')
-    screen.blit(score_text, dest=(0, 0))
+    screen.blit(score_text, dest=(10, 0))
+    high_score_text = font.render(f'High score: {high_score}', True, 'white')
+    screen.blit(high_score_text, dest=(10, 35))
     pygame.display.flip()
     pygame.display.update()
